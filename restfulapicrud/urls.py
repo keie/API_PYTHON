@@ -15,9 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from .router import router
+#from .router import router
+from employeeapi.views import (
+    api_create_file_view
+)
+
+app_name = 'file'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/',include(router.urls))
+    #path('api/',include(router.urls)),
+    path('api/create',api_create_file_view,name="create")
 ]
