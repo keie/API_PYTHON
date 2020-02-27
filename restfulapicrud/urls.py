@@ -25,5 +25,7 @@ app_name = 'file'
 urlpatterns = [
     path('admin/', admin.site.urls),
     #path('api/',include(router.urls)),
-    path('api/create',api_create_file_view,name="create")
+    path('api/create',api_create_file_view,name="create"),
+    #path('api/',include(router.urls)),
+    path('api/fileapi/',include('fileapi.urls','file_api'))
 ]
