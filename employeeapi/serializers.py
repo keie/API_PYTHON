@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Employee
 from .models import File
+from .models import Forms
 
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,6 +11,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = File
+        fields = '__all__'
+
+class FormsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Forms
         fields = '__all__'
 
 #api <-> mobile app/ web app/ etc. json/xml

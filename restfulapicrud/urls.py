@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import path,include
 #from .router import router
 from employeeapi.views import (
-    api_create_file_view
+    api_create_file_view,
+    api_get_form_viewById
 )
 
 app_name = 'file'
@@ -25,5 +26,6 @@ app_name = 'file'
 urlpatterns = [
     path('admin/', admin.site.urls),
     #path('api/',include(router.urls)),
-    path('api/create',api_create_file_view,name="create")
+    path('api/create',api_create_file_view,name="create"),
+    path('api/form/<id>',api_get_form_viewById,name="form")
 ]
