@@ -13,7 +13,6 @@ def api_get_form_viewById(request,id):
     except Forms.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if(request.method == "GET"):
-        
         serializer = serializers.FormsSerializer(form)
         return Response(serializer.data)
 
