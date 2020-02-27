@@ -8,6 +8,6 @@ from fileapi.views import (
 app_name = "fileapi"
 
 urlpatterns = [
-    path('<id>/',api_get_file_view, name="detail"),
+    path('<id>',api_get_file_view, name="detail"),
     path('create',api_post_file_view, name="create"),
 ]
