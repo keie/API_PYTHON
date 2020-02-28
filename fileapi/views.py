@@ -39,6 +39,10 @@ def api_post_file_view(request):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.data,status=status.HTTP_400_BAD_REQUEST)
 
+def test():
+
+    return Response("it works!")
+
 
 def scanner(file2):
     
@@ -126,4 +130,4 @@ def scanner(file2):
         answersArray.append(bubbled[1])
 
     # grab the test taker
-    print(answersArray)
+    return (answersArray)

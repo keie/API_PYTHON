@@ -21,7 +21,13 @@ class Forms(models.Model):
     createdat=models.DateTimeField(auto_now=True)
     updatedat=models.DateTimeField(auto_now=True)
     projectId=models.IntegerField(default=0)
-    
+
+class Response_Form(models.Model):
+    id= models.IntegerField(primary_key=True)
+    response=JSONField()
+    createdAt=models.DateTimeField(auto_now=True)
+    updatedAt=models.DateTimeField(auto_now=True)
+    formId=models.IntegerField(default=0)
 
 
     #Create / Insert / Add POST
