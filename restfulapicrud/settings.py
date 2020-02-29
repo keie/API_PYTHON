@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'restfulapiDB',
         'USER':'postgres',
-        'PASSWORD':'Peliculas1',
+        'PASSWORD':'root',
         'HOST':'localhost'
     }
 }
