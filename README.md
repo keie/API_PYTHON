@@ -10,7 +10,8 @@ Python Api to consume services from PosgreSQL data
  pip install imutils
  pip install numpy
  pip install scipy
-
+ pip install requests
+ 
 # para hacer la migracion de la BD
 
 python manage.py migrate
