@@ -50,18 +50,16 @@ def api_create_processing_view(request):
         container.append(scanner(cell))
         for y,value in enumerate(scanner(cell)):
             if json_body['questions'][y]['answers'][value]["id"]==value:
-                r = requests.post('http://127.0.0.1:8000/api/insert/responseForm', json={
-                    "response":[
-                        json_body['questions'][y]['answers'][value]['name']
-                    ],
+                containerAux.append(json_body['questions'][y]['answers'][value]['name'])
+        containerAns.append(containerAux)
+        #containerAux=[]
+    r = requests.post('http://127.0.0.1:8000/api/insert/responseForm', json={
+                    "response":containerAux,
                     "createdAt":"2020-02-08T16:31:23.043000Z",
                     "updatedAt":"2020-02-08T16:31:23.043000Z",
                     "formId":idForm
                 })
-                containerAux.append(json_body['questions'][y]['answers'][value]['name'])
-        containerAns.append(containerAux)
-        containerAux=[]
-    return Response(containerAns)
+    return Response(containerAux)
 
 @api_view(['GET',])
 def getResponses(request,id):
