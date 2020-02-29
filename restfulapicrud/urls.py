@@ -20,7 +20,8 @@ from employeeapi.views import (
     api_create_file_view,
     api_get_form_viewById,
     api_create_processing_view,
-    getResponses
+    getResponses,
+    postRespones
 )
 
 app_name = 'file'
@@ -33,5 +34,6 @@ urlpatterns = [
     path('api/create',api_create_file_view,name="create"),
     path('api/form/<id>',api_get_form_viewById,name="form"),
     path('api/formResponse',api_create_processing_view,name="formResponse"),
-     path('api/answers/<id>',getResponses,name="answer")
+    path('api/answers/<id>',getResponses,name="answer"),
+    path('api/insert/responseForm',postRespones,name="create")
 ]

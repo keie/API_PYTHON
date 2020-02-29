@@ -23,7 +23,6 @@ class Forms(models.Model):
     projectId=models.IntegerField(default=0)
 
 class Response_Form(models.Model):
-    id= models.IntegerField(primary_key=True)
     response=JSONField()
     createdAt=models.DateTimeField(auto_now=True)
     updatedAt=models.DateTimeField(auto_now=True)
