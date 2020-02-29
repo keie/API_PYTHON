@@ -23,8 +23,6 @@ python manage.py migrate
 # Request Para servicios
 
 ## [POST] http://127.0.0.1:8000/api/formResponse
-
-### lee la imagen (ver imagen example.jpg) del mapa de bits y da como salida las respuestas en un JSON
 body:
 {
     "formId":idFormFromBdd(table: employeeapi_forms)
@@ -32,8 +30,10 @@ body:
         "base64image"
     ]
 }
+### lee la(s) imagen(es) (ver imagen example.jpg) del mapa de bits y da como salida las respuestas en un JSON
+
 
 ## [GET] http://127.0.0.1:8000/api/form/<IdForm>
 
-### Da como resultado la estructura del formulaion (encuesta) en detalle en un JSON
+### Da como resultado la estructura del formulario (encuesta) en detalle en un JSON
 
