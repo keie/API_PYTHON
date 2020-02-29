@@ -11,6 +11,7 @@ Python Api to consume services from PosgreSQL data
  pip install numpy
  pip install scipy
  pip install requests
+pip install django-cors-headers
 
 # para hacer la migracion de la BD
 
