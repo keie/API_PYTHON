@@ -41,18 +41,13 @@ def api_create_file_view(request):
 def api_create_processing_view(request):
     idForm=request.data['formId']
     images=request.data['files']
-    container=[]
     containerAux=[]
-    containerAns=[]
     JsonQuestion=requests.get('http://127.0.0.1:8000/api/form/'+str(idForm))
     json_body = JsonQuestion.json()
     for i,cell in enumerate(images):
-        container.append(scanner(cell))
         for y,value in enumerate(scanner(cell)):
             if json_body['questions'][y]['answers'][value]["id"]==value:
                 containerAux.append(json_body['questions'][y]['answers'][value]['name'])
-        containerAns.append(containerAux)
-        #containerAux=[]
     r = requests.post('http://127.0.0.1:8000/api/insert/responseForm', json={
                     "response":containerAux,
                     "createdAt":"2020-02-08T16:31:23.043000Z",
