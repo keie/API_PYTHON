@@ -45,7 +45,7 @@ def api_create_processing_view(request):
     JsonQuestion=requests.get('http://127.0.0.1:8000/api/form/'+str(idForm))
     json_body = JsonQuestion.json()
     for i,cell in enumerate(images):
-        for y,value in enumerate(scanner(cell)):
+        for y,value in enumerate(scanner(cell,json_body)):
             if json_body['questions'][y]['answers'][value]["id"]==value:
                 containerAux.append(json_body['questions'][y]['answers'][value]['name'])
     r = requests.post('http://127.0.0.1:8000/api/insert/responseForm', json={
