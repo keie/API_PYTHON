@@ -48,21 +48,9 @@ def scanner(file2,json_questions):
     
     ANSWER_KEY = {0: 1, 1: 4, 2: 0, 3: 3, 4: 1}
     answersArray = []
-    
-    # filename = 'example.jpg'  # I assume you have a way of picking unique filenames
-    # image= base64.b64decode(file2)
-    # with open(filename, 'wb') as f:
-    #     f.write(image)
-    #     print("true") 
-
-
     img = base64.b64decode(file2); 
     npimg = np.fromstring(img, dtype=np.uint8); 
     image = cv2.imdecode(npimg, 1)
-
-
-    # image = cv2.imread(filename)
-    #image = cv2.imread("./test_04.png")
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     edged = cv2.Canny(blurred, 75, 200)
@@ -115,12 +103,10 @@ def scanner(file2,json_questions):
     for object_question in json_questions['questions']:
         array_lenght.append(len(object_question['answers']))
 
-    ARRAYS_LENGHT = [4 , 5, 6 , 2 , 5, 6 , 6, 6, 4]
     
     stop = 0
     i = 0
     start = 0
-
     while i < len(array_lenght):
 
         stop = stop + array_lenght[i] 
@@ -128,17 +114,38 @@ def scanner(file2,json_questions):
         cnts = contours.sort_contours(questionCnts[start : stop])[0]
         bubbled = None
         start = stop 
+        answer = None
 
-        for (j, c) in enumerate(cnts):
-
-            mask = np.zeros(thresh.shape, dtype="uint8")
-            cv2.drawContours(mask, [c], -1, 255, -1)
-            mask = cv2.bitwise_and(thresh, thresh, mask=mask)
-            total = cv2.countNonZero(mask)
-            if bubbled is None or total > bubbled[0]:
-                bubbled = (total, j)
-        answersArray.append(bubbled[1])
+        if(str(json_questions['questions'][i]['type']) == "ssimple" or str(json_questions['questions'][i]['type'] == "scala") ):
+            answer = simple(cnts, thresh)
+        if(str(json_questions['questions'][i]['type']) == "smultiple"):
+            answer = multiple(cnts, thresh)
+        answersArray.append(answer)
         i = i + 1
 
     # grab the test taker
     return (answersArray)
+
+
+def simple(cnts, thresh):
+    bubbled = None
+    for (j, c) in enumerate(cnts):
+        mask = np.zeros(thresh.shape, dtype="uint8")
+        cv2.drawContours(mask, [c], -1, 255, -1)
+        mask = cv2.bitwise_and(thresh, thresh, mask=mask)
+        total = cv2.countNonZero(mask)
+        if bubbled is None or total > bubbled[0]:
+            bubbled = (total, j)
+    return bubbled[1]
+
+
+def multiple(cnts, thresh):
+    answers = []
+    for (j, c) in enumerate(cnts):
+        mask = np.zeros(thresh.shape, dtype="uint8")
+        cv2.drawContours(mask, [c], -1, 255, -1)
+        mask = cv2.bitwise_and(thresh, thresh, mask=mask)
+        total = cv2.countNonZero(mask)
+        if total > 200:
+            answers.append(j)
+    return answers

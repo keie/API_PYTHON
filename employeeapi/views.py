@@ -46,8 +46,18 @@ def api_create_processing_view(request):
     json_body = JsonQuestion.json()
     for i,cell in enumerate(images):
         for y,value in enumerate(scanner(cell,json_body)):
-            if json_body['questions'][y]['answers'][value]["id"]==value:
-                containerAux.append(json_body['questions'][y]['answers'][value]['name'])
+            if(isinstance(value,list)):
+                containerMultiple = []
+                for z,valuemultiple in enumerate(value):
+                    if json_body['questions'][y]['answers'][valuemultiple]["id"]==valuemultiple:
+                        containerMultiple.append(json_body['questions'][y]['answers'][valuemultiple]['name'])
+                containerAux.append(containerMultiple)
+            else:
+                
+                if json_body['questions'][y]['answers'][value]["id"]==value:
+                    containerAux.append(json_body['questions'][y]['answers'][value]['name'])
+                
+
     r = requests.post('http://127.0.0.1:8000/api/insert/responseForm', json={
                     "response":containerAux,
                     "createdAt":"2020-02-08T16:31:23.043000Z",
