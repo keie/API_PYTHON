@@ -44,7 +44,7 @@ def test():
     return Response("it works!")
 
 
-def scanner(file2,json_questions):
+def scanner(indexQuestion,file2,json_questions):
     
     ANSWER_KEY = {0: 1, 1: 4, 2: 0, 3: 3, 4: 1}
     answersArray = []
@@ -100,8 +100,21 @@ def scanner(file2,json_questions):
 
     #armo el array de longitudes de las respuestas
     array_lenght = []
-    for object_question in json_questions['questions']:
-        array_lenght.append(len(object_question['answers']))
+    totalAnswers = 0
+    iq = indexQuestion
+    print("len(json_questions['questions']['answers']): " + str(len(json_questions['questions'])))
+    print("indexQuestion: " + str(indexQuestion))
+    while ( totalAnswers < len(questionCnts) ):
+        array_lenght.append(len(json_questions['questions'][iq]['answers']))
+        totalAnswers = totalAnswers + len(json_questions['questions'][iq]['answers'])
+        iq = iq + 1
+
+    print("array_lenght" + str(array_lenght))
+
+    # for object_question in json_questions['questions']:
+    #     totalAnswers = totalAnswers + len(object_question['answers'])
+    #     if(totalAnswers <= len(questionCnts)):
+    #         array_lenght.append(len(object_question['answers']))
 
     
     stop = 0
@@ -109,18 +122,23 @@ def scanner(file2,json_questions):
     start = 0
     while i < len(array_lenght):
 
-        stop = stop + array_lenght[i] 
-        actualcnts = questionCnts[start : stop]
-        cnts = contours.sort_contours(questionCnts[start : stop])[0]
-        bubbled = None
-        start = stop 
-        answer = None
-
-        if(str(json_questions['questions'][i]['type']) == "ssimple" or str(json_questions['questions'][i]['type'] == "scala") ):
-            answer = simple(cnts, thresh)
-        if(str(json_questions['questions'][i]['type']) == "smultiple"):
-            answer = multiple(cnts, thresh)
-        answersArray.append(answer)
+        if(array_lenght[i] != 0):
+            #Preguntas de seleccion simple, seleccion multiple, escala
+            stop = stop + array_lenght[i] 
+            actualcnts = questionCnts[start : stop]
+            cnts = contours.sort_contours(questionCnts[start : stop])[0]
+            bubbled = None
+            start = stop 
+            answer = None
+            print("entro "+ str(i))
+            if(str(json_questions['questions'][i+indexQuestion]['type']) == "ssimple" or str(json_questions['questions'][i+indexQuestion]['type'] == "scala") ):
+                answer = simple(cnts, thresh)
+            if(str(json_questions['questions'][i+indexQuestion]['type']) == "smultiple"):
+                answer = multiple(cnts, thresh)
+            answersArray.append(answer)
+        else:
+            #Preguntas de desarrollo 
+            answersArray.append(False)
         i = i + 1
 
     # grab the test taker
