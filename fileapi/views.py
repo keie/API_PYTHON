@@ -32,7 +32,6 @@ def api_post_file_view(request):
     if(request.method == "POST"):
         serializer = FileApiSerializer(file_api,data=request.data)
         
-        #print(request.data['file2'] )
         scanner(request.data['file2']) 
         if(serializer.is_valid()):
             serializer.save()
@@ -102,19 +101,10 @@ def scanner(indexQuestion,file2,json_questions):
     array_lenght = []
     totalAnswers = 0
     iq = indexQuestion
-    print("len(json_questions['questions']['answers']): " + str(len(json_questions['questions'])))
-    print("indexQuestion: " + str(indexQuestion))
     while ( totalAnswers < len(questionCnts) ):
         array_lenght.append(len(json_questions['questions'][iq]['answers']))
         totalAnswers = totalAnswers + len(json_questions['questions'][iq]['answers'])
         iq = iq + 1
-
-    print("array_lenght" + str(array_lenght))
-
-    # for object_question in json_questions['questions']:
-    #     totalAnswers = totalAnswers + len(object_question['answers'])
-    #     if(totalAnswers <= len(questionCnts)):
-    #         array_lenght.append(len(object_question['answers']))
 
     
     stop = 0
@@ -130,7 +120,6 @@ def scanner(indexQuestion,file2,json_questions):
             bubbled = None
             start = stop 
             answer = None
-            print("entro "+ str(i))
             if(str(json_questions['questions'][i+indexQuestion]['type']) == "ssimple" or str(json_questions['questions'][i+indexQuestion]['type'] == "scala") ):
                 answer = simple(cnts, thresh)
             if(str(json_questions['questions'][i+indexQuestion]['type']) == "smultiple"):

@@ -47,7 +47,6 @@ def api_create_processing_view(request):
     indexQuestion = 0
     for i,cell in enumerate(images):
         for y,value in enumerate(scanner(indexQuestion, cell,json_body)):
-            print("y + indexQuestion: " + str(y + indexQuestion))
             if(isinstance(value,list)):
                 #Respuestas de seleccion multiple
                 containerMultiple = []
@@ -64,7 +63,6 @@ def api_create_processing_view(request):
                     containerAux.append(json_body['questions'][y + indexQuestion]['answers'][value]['name'])
         indexQuestion = len(containerAux)
                 
-    print(containerAux)
     r = requests.post('http://127.0.0.1:8000/api/insert/responseForm', json={
                     "response":containerAux,
                     "createdAt":"2020-02-08T16:31:23.043000Z",
