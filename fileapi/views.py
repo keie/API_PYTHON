@@ -101,12 +101,16 @@ def scanner(indexQuestion,file2,json_questions):
     array_lenght = []
     totalAnswers = 0
     iq = indexQuestion
+    # print(json_questions    )
+    # print("len(questionCnts): " + str(len(questionCnts)))
     while ( totalAnswers < len(questionCnts) ):
+        # print("entro " + str(iq) + " totalAnswers " + str(totalAnswers))
         array_lenght.append(len(json_questions['questions'][iq]['answers']))
         totalAnswers = totalAnswers + len(json_questions['questions'][iq]['answers'])
-        iq = iq + 1
+        if (iq != (len(questionCnts)-1)):
+            iq = iq + 1
 
-    
+    # print(array_lenght)
     stop = 0
     i = 0
     start = 0
@@ -120,6 +124,7 @@ def scanner(indexQuestion,file2,json_questions):
             bubbled = None
             start = stop 
             answer = None
+            # print("entro (i+indexQuestion)" + str(i+indexQuestion) + " " + str(json_questions['questions'][i+indexQuestion]['type']))
             if(str(json_questions['questions'][i+indexQuestion]['type']) == "ssimple" or str(json_questions['questions'][i+indexQuestion]['type'] == "scala") ):
                 answer = simple(cnts, thresh)
             if(str(json_questions['questions'][i+indexQuestion]['type']) == "smultiple"):
@@ -131,6 +136,7 @@ def scanner(indexQuestion,file2,json_questions):
         i = i + 1
 
     # grab the test taker
+    # print (answersArray)
     return (answersArray)
 
 
