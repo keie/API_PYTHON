@@ -44,10 +44,25 @@ def api_create_processing_view(request):
     containerAux=[]
     JsonQuestion=requests.get('http://127.0.0.1:8000/api/form/'+str(idForm))
     json_body = JsonQuestion.json()
+    indexQuestion = 0
     for i,cell in enumerate(images):
-        for y,value in enumerate(scanner(cell,json_body)):
-            if json_body['questions'][y]['answers'][value]["id"]==value:
-                containerAux.append(json_body['questions'][y]['answers'][value]['name'])
+        for y,value in enumerate(scanner(indexQuestion, cell,json_body)):
+            if(isinstance(value,list)):
+                #Respuestas de seleccion multiple
+                containerMultiple = []
+                for z,valuemultiple in enumerate(value):
+                    if json_body['questions'][y + indexQuestion]['answers'][valuemultiple]["id"]==valuemultiple:
+                        containerMultiple.append(json_body['questions'][y + indexQuestion]['answers'][valuemultiple]['name'])
+                containerAux.append(containerMultiple)
+            elif(isinstance(value,bool)):
+                #Respuestas de desarrollo
+                containerAux.append(value)
+            else:
+                #Respuestas de seleccion simple / escala
+                if json_body['questions'][y + indexQuestion]['answers'][value]["id"]==value:
+                    containerAux.append(json_body['questions'][y + indexQuestion]['answers'][value]['name'])
+        indexQuestion = len(containerAux)
+                
     r = requests.post('http://127.0.0.1:8000/api/insert/responseForm', json={
                     "response":containerAux,
                     "createdAt":"2020-02-08T16:31:23.043000Z",

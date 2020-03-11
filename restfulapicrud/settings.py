@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'restfulapicrud.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'restfulapiDB',
+        'NAME': 'formucab',
         'USER':'postgres',
         'PASSWORD':'root',
         'HOST':'localhost'

@@ -22,12 +22,17 @@ class Forms(models.Model):
     updatedat=models.DateTimeField(auto_now=True)
     projectId=models.IntegerField(default=0)
 
+    class Meta:
+        db_table = "forms"
+
 class Response_Form(models.Model):
     response=JSONField()
     createdAt=models.DateTimeField(auto_now=True)
     updatedAt=models.DateTimeField(auto_now=True)
     formId=models.IntegerField(default=0)
-
+    
+    class Meta:
+        db_table = "response_form"
 
     #Create / Insert / Add POST
     #Retrieve / Fetch - GET
