@@ -54,7 +54,7 @@ def api_create_processing_view(request):
                     if json_body['questions'][y + indexQuestion]['answers'][valuemultiple]["id"]==valuemultiple:
                         containerMultiple.append(json_body['questions'][y + indexQuestion]['answers'][valuemultiple]['name'])
                 containerAux.append(containerMultiple)
-            elif(isinstance(value,bool)):
+            elif(isinstance(value,str)):
                 #Respuestas de desarrollo
                 containerAux.append(value)
             else:
