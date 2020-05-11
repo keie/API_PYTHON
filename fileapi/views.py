@@ -55,7 +55,7 @@ def test():
 def scanner(indexQuestion,file2,json_questions):
 
 	
-	print ("################ENTRO EN SCANNER###############")
+	# print ("################ENTRO EN SCANNER###############")
 	
 	ANSWER_KEY = {0: 1, 1: 4, 2: 0, 3: 3, 4: 1}
 	answersArray = []
@@ -109,18 +109,29 @@ def scanner(indexQuestion,file2,json_questions):
 		
 		(x, y, w, h) = cv2.boundingRect(c)
 		ar = w / float(h)
+		# print(h,w,ar)
 		# box
-		if w >= 100 and h >= 50 and ar > 4:
-			print(h,w,ar)
+		if w >= 3500 and h >= 850 and ar > 4:
 			questionCnts.append(c)
 			
 		# bubble
-		if w >= 50 and h >= 50 and ar >= 0.8 and ar <= 1.5:
+		if w >= 250 and h >= 250 and ar >= 0.8 and ar <= 1.5:
 			questionCnts.append(c)
 
 	questionCnts = contours.sort_contours(questionCnts,
 		method="top-to-bottom")[0]
 	correct = 0
+
+	
+	p = paper.copy()
+	for ct in questionCnts:
+		pass
+		cv2.drawContours(p, [ct], -1, (random.randint(1,254),random.randint(1,254),random.randint(1,254)), -1)
+
+		
+	# imS = cv2.resize(p, (750,1000))   
+	# cv2.imshow("paper", imS)
+	# cv2.waitKey(0)
 	
 
 	#armo el array de longitudes de las respuestas
@@ -144,17 +155,17 @@ def scanner(indexQuestion,file2,json_questions):
 	i = 0
 	start = 0
 	while i < len(array_lenght):
-		print("array_lenght[i] ",array_lenght[i])
+		# print("array_lenght[i] ",array_lenght[i])
 		#Preguntas de seleccion simple, seleccion multiple, escala
 		stop = stop + array_lenght[i] 
 		actualcnts = questionCnts[start : stop]
-		print("i, start, stop")
-		print(i, start, stop)
+		# print("i, start, stop")
+		# print(i, start, stop)
 		cnts = contours.sort_contours(questionCnts[start : stop])[0]
 		bubbled = None
 		start = stop 
 		answer = None
-		print("entro (i+indexQuestion)" + str(i+indexQuestion) + " " + str(json_questions['questions'][i+indexQuestion]['type']))
+		# print("entro (i+indexQuestion)" + str(i+indexQuestion) + " " + str(json_questions['questions'][i+indexQuestion]['type']))
 		if(str(json_questions['questions'][i+indexQuestion]['type']) == "ssimple" or str(json_questions['questions'][i+indexQuestion]['type'] == "scala") ):
 			answer = simple(cnts, thresh)
 		if(str(json_questions['questions'][i+indexQuestion]['type']) == "smultiple"):
@@ -166,8 +177,8 @@ def scanner(indexQuestion,file2,json_questions):
 
 	# grab the test taker
 	
-	print ("################SALIO DE SCANNER###############")
-	print (answersArray)
+	# print ("################SALIO DE SCANNER###############")
+	# print (answersArray)
 	return (answersArray)
 
 
@@ -185,12 +196,13 @@ def simple(cnts, thresh):
 
 def multiple(cnts, thresh):
 	answers = []
+	validCheck = 50000 
 	for (j, c) in enumerate(cnts):
 		mask = np.zeros(thresh.shape, dtype="uint8")
 		cv2.drawContours(mask, [c], -1, 255, -1)
 		mask = cv2.bitwise_and(thresh, thresh, mask=mask)
 		total = cv2.countNonZero(mask)
-		if total > 5000:
+		if total > validCheck:
 			answers.append(j)
 	return answers
 
@@ -199,11 +211,15 @@ def development(cnts,thresh,paper):
 	textLine = ""
 
 	
-	# #DENSE Model
-	# new_model = tf.keras.models.load_model('emnist_trained_dense.h5')
+	#DENSE Model
+	new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/emnist_trained_dense.h5')
 
-	# #CNN Model
-	new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/emnist_trained.h5')
+
+	# # #CNN Model
+	# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/emnist_trained.h5')
+	
+	# #CNN YUCA Model
+	# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/emnist_trained_yuca.h5')
 
 
 	letters ={0:0,1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,
@@ -220,6 +236,9 @@ def development(cnts,thresh,paper):
 	box = thresh[y+3 : y+h -3 , x+3 : x + w - 3] #tamano de la caja de la respuesta de desarrollo
 	boxPaper = paper[y+3 : y+h -3 , x+3 : x + w - 3] #tamano de la caja de la respuesta de desarrollo
 
+	
+	# cv2.imshow("box", box)
+	# cv2.waitKey(0)
 	
 
 	#####################################################CODIGO MEDIUM PARA DETECTAR CUADRADOS#########################################################
@@ -248,14 +267,29 @@ def development(cnts,thresh,paper):
 			if (wBoxito > 17 and hBoxito > 17):
 				
 				# idx += 1
-				new_img = boxPaper[yBoxito:yBoxito+wBoxito, xBoxito:xBoxito+wBoxito]
+				new_img = boxPaper[yBoxito + 10 :yBoxito+wBoxito - 10, xBoxito + 10 :xBoxito+wBoxito - 10]
 				
 				####################INVENTO DE CORTAR LA LETRA######################
 										
 				grey = cv2.cvtColor(new_img.copy(), cv2.COLOR_BGR2GRAY)	
 				ret, threshLetter = cv2.threshold(grey.copy(), 75, 255, cv2.THRESH_BINARY_INV)
-				ctnsLetter, _ = cv2.findContours(threshLetter.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+				
+				blurredLetter = cv2.GaussianBlur(threshLetter, (5, 5), 0)
+				
+
+				ctnsLetter, _ = cv2.findContours(blurredLetter.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 				# print("STR(LEN(ctnsLetter))" , len(ctnsLetter))
+				
+				# cv2.imshow("new_img", blurredLetter)
+				# cv2.waitKey(0)
+
+				# for ctLetter in ctnsLetter:
+				# 		xi2, yi2, wi2, hi2 = cv2.boundingRect(ctij)
+				# 		ar = w / float(h)
+				# 		print(xi2, yi2, wi2, hi2, ar)
+				# 		if(hi2 > biggerCtn[0]):
+				# 			biggerCtn = ( hi2 , ctij)
 
 				if(len(ctnsLetter) == 0):
 					# no letter / space
@@ -265,31 +299,69 @@ def development(cnts,thresh,paper):
 
 				elif(len(ctnsLetter) > 1):
 					# letter i or j
-
+					# print("letter i or j")
+					ij = threshLetter.copy()
 					rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 7))
-					dilation = cv2.dilate(threshLetter, rect_kernel, iterations = 1)
+					dilation = cv2.dilate(ij, rect_kernel, iterations = 1)
 					
-					im2 = new_img.copy()
+					 
 					contoursSpecial, _ = cv2.findContours(dilation, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-					xi, yi, wi, hi = cv2.boundingRect(contoursSpecial[0])
+
+					biggerCtn = (0 , [])
+					#Get the bigger contour
+					for ctij in contoursSpecial:
+						xi2, yi2, wi2, hi2 = cv2.boundingRect(ctij)
+						ar = w / float(h)
+						print(xi2, yi2, wi2, hi2, ar)
+						if(hi2 > biggerCtn[0]):
+							biggerCtn = ( hi2 , ctij)
+
+					xi, yi, wi, hi = cv2.boundingRect(biggerCtn[1])
 					digit = threshLetter[yi:yi+hi, xi:xi+wi]
 
-					
-						
-					# # Resizing that digit to (18, 18)
-					resized_digit = cv2.resize(digit, (18,18))
-					
-					# # Padding the digit with 5 pixels of black color (zeros) in each side to finally produce the image of (28, 28)
-					padded_digit = np.pad(resized_digit, ((5,5),(5,5)), "constant", constant_values=0)
+					height, width = digit.shape
+					percent = (18* 100) /height 
+
+					# height = int(height * percent / 100)
+					height = 18
+					width = int(width * percent / 100)
+					if(width % 2 != 0):
+						width = width + 1
+
+					resized_digit = cv2.resize(digit, (width,height))
+
+					paddingX = abs(int((28 - width) / 2))
+
+					# print("STR(LEN(ctnsLetter))" , len(ctnsLetter))
 
 					
-					prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1))
+					# cv2.imshow("digit i j", digit)
+					
+					# # Resizing that digit to (18, 18)
+					# resized_digit = cv2.resize(digit, (18,18))
+					
+					# # Padding the digit with 5 pixels of black color (zeros) in each side to finally produce the image of (28, 28)
+					padded_digit = np.pad(resized_digit, ((5,5),(paddingX,paddingX)), "constant", constant_values=0)
+					# print("padded_digit.shape ",padded_digit.shape)
+					height, width = padded_digit.shape
+					if(height > 28 or width > 28):
+						padded_digit = cv2.resize(digit, (28,28))
+				
+
+					# En caso de usar el model de DENSE
+					prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
+					
+					# # En caso de usar el model de CNN
+					# prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1))
 					
 					textAnswer1 = textAnswer1 + str(letters[int(np.argmax(prediction))])
 
 					textLine = textLine + str(letters[int(np.argmax(prediction))])
 					#PRUEBA HACIENDO LA PREDICITION CON ESTA IMAGEN
 					# print(str(letters[int(np.argmax(prediction))]), np.argmax(prediction))
+					
+					# cv2.imshow("padded_digit i j final", padded_digit)
+					# cv2.waitKey(0)
 
 				else:	
 					#Normal letter
@@ -302,15 +374,36 @@ def development(cnts,thresh,paper):
 						
 					# Cropping out the digit from the image corresponding to the current contours in the for loop
 					digit = threshLetter[yL:yL+hL, xL:xL+wL]
-					
+
+					height, width = digit.shape
+					percent = (18* 100) /height 
+
+					# height = int(height * percent / 100)
+					height = 18
+					width = int(width * percent / 100)
+					if(width % 2 != 0):
+						width = width + 1
+
+					resized_digit = cv2.resize(digit, (width,height))
+
+					paddingX = abs(int((28 - width) / 2))
 					# # Resizing that digit to (18, 18)
-					resized_digit = cv2.resize(digit, (18,18))
+					# resized_digit = cv2.resize(digit, (18,18))
 					
 					# # Padding the digit with 5 pixels of black color (zeros) in each side to finally produce the image of (28, 28)
-					padded_digit = np.pad(resized_digit, ((5,5),(5,5)), "constant", constant_values=0)
+					padded_digit = np.pad(resized_digit, ((5,5),(paddingX,paddingX)), "constant", constant_values=0)
+					# print("padded_digit.shape ",padded_digit.shape)
+					height, width = padded_digit.shape
+					if(height > 28 or width > 28):
+						padded_digit = cv2.resize(digit, (28,28))
+
+
+					# En caso de usar el model de DENSE
+					prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
 
 					
-					prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1))
+					# # En caso de usar el model de CNN
+					# prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1))
 
 
 					textAnswer1 = textAnswer1 + str(letters[int(np.argmax(prediction))])
@@ -318,6 +411,9 @@ def development(cnts,thresh,paper):
 
 					# print(str(letters[int(np.argmax(prediction))]), np.argmax(prediction))
 						
+					# cv2.imshow("padded_digit letter", padded_digit)
+					# cv2.waitKey(0)
+
 						# Adding the preproces
 				####################INVENTO DE CORTAR LA LETRA######################
 
@@ -336,7 +432,7 @@ def development(cnts,thresh,paper):
 		# print("textAnswer1: " + textAnswer1)
 		# answersArray.append(textAnswer1)
 		
-	return textAnswer1
+	return textAnswer1.lower()
 
 
 def getCntsBoxs(box):
