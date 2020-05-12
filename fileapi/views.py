@@ -293,13 +293,13 @@ def development(cnts,thresh,paper):
 
 				if(len(ctnsLetter) == 0):
 					# no letter / space
-					
+					print("space normal")
 					textAnswer1 = textAnswer1 + " "
 
 
 				elif(len(ctnsLetter) > 1):
 					# letter i or j
-					# print("letter i or j")
+					print("letter i or j")
 					ij = threshLetter.copy()
 					rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 7))
 					dilation = cv2.dilate(ij, rect_kernel, iterations = 1)
@@ -311,57 +311,65 @@ def development(cnts,thresh,paper):
 					#Get the bigger contour
 					for ctij in contoursSpecial:
 						xi2, yi2, wi2, hi2 = cv2.boundingRect(ctij)
+						print("xi2, yi2, wi2, hi2")
+						print(xi2, yi2, wi2, hi2)
 						ar = w / float(h)
 						print(xi2, yi2, wi2, hi2, ar)
 						if(hi2 > biggerCtn[0]):
-							biggerCtn = ( hi2 , ctij)
+							biggerCtn = ( hi2 , wi2, ctij)
 
-					xi, yi, wi, hi = cv2.boundingRect(biggerCtn[1])
-					digit = threshLetter[yi:yi+hi, xi:xi+wi]
 
-					height, width = digit.shape
-					percent = (18* 100) /height 
+					if(wL < 20 or hL < 20):
+						print("espacio ij")
+						textAnswer1 = textAnswer1 + " "
+					else:
 
-					# height = int(height * percent / 100)
-					height = 18
-					width = int(width * percent / 100)
-					if(width % 2 != 0):
-						width = width + 1
+						xi, yi, wi, hi = cv2.boundingRect(biggerCtn[2])
+						digit = threshLetter[yi:yi+hi, xi:xi+wi]
 
-					resized_digit = cv2.resize(digit, (width,height))
+						height, width = digit.shape
+						percent = (18* 100) /height 
 
-					paddingX = abs(int((28 - width) / 2))
+						# height = int(height * percent / 100)
+						height = 18
+						width = int(width * percent / 100)
+						if(width % 2 != 0):
+							width = width + 1
 
-					# print("STR(LEN(ctnsLetter))" , len(ctnsLetter))
+						resized_digit = cv2.resize(digit, (width,height))
 
+						paddingX = abs(int((28 - width) / 2))
+
+						# print("STR(LEN(ctnsLetter))" , len(ctnsLetter))
+
+						
+						# cv2.imshow("digit i j", digit)
+						
+						# # Resizing that digit to (18, 18)
+						# resized_digit = cv2.resize(digit, (18,18))
+						
+						# # Padding the digit with 5 pixels of black color (zeros) in each side to finally produce the image of (28, 28)
+						padded_digit = np.pad(resized_digit, ((5,5),(paddingX,paddingX)), "constant", constant_values=0)
+						# print("padded_digit.shape ",padded_digit.shape)
+						height, width = padded_digit.shape
+						if(height > 28 or width > 28):
+							padded_digit = cv2.resize(digit, (28,28))
 					
-					# cv2.imshow("digit i j", digit)
-					
-					# # Resizing that digit to (18, 18)
-					# resized_digit = cv2.resize(digit, (18,18))
-					
-					# # Padding the digit with 5 pixels of black color (zeros) in each side to finally produce the image of (28, 28)
-					padded_digit = np.pad(resized_digit, ((5,5),(paddingX,paddingX)), "constant", constant_values=0)
-					# print("padded_digit.shape ",padded_digit.shape)
-					height, width = padded_digit.shape
-					if(height > 28 or width > 28):
-						padded_digit = cv2.resize(digit, (28,28))
-				
 
-					# En caso de usar el model de DENSE
-					prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
-					
-					# # En caso de usar el model de CNN
-					# prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1))
-					
-					textAnswer1 = textAnswer1 + str(letters[int(np.argmax(prediction))])
+						# En caso de usar el model de DENSE
+						prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
+						
+						# # En caso de usar el model de CNN
+						# prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1))
+						
+						textAnswer1 = textAnswer1 + str(letters[int(np.argmax(prediction))])
 
-					textLine = textLine + str(letters[int(np.argmax(prediction))])
-					#PRUEBA HACIENDO LA PREDICITION CON ESTA IMAGEN
-					# print(str(letters[int(np.argmax(prediction))]), np.argmax(prediction))
-					
-					# cv2.imshow("padded_digit i j final", padded_digit)
-					# cv2.waitKey(0)
+						textLine = textLine + str(letters[int(np.argmax(prediction))])
+						#PRUEBA HACIENDO LA PREDICITION CON ESTA IMAGEN
+						# print(str(letters[int(np.argmax(prediction))]), np.argmax(prediction))
+						
+						# cv2.imshow("padded_digit i j final", padded_digit)
+						# cv2.waitKey(0)
 
 				else:	
 					#Normal letter
@@ -371,48 +379,55 @@ def development(cnts,thresh,paper):
 					# print("STR(LEN(ctnsLetter))" , len(ctnsLetter))
 					cLetter = ctnsLetter[0]
 					xL,yL,wL,hL = cv2.boundingRect(cLetter)
-						
-					# Cropping out the digit from the image corresponding to the current contours in the for loop
-					digit = threshLetter[yL:yL+hL, xL:xL+wL]
-
-					height, width = digit.shape
-					percent = (18* 100) /height 
-
-					# height = int(height * percent / 100)
-					height = 18
-					width = int(width * percent / 100)
-					if(width % 2 != 0):
-						width = width + 1
-
-					resized_digit = cv2.resize(digit, (width,height))
-
-					paddingX = abs(int((28 - width) / 2))
-					# # Resizing that digit to (18, 18)
-					# resized_digit = cv2.resize(digit, (18,18))
 					
-					# # Padding the digit with 5 pixels of black color (zeros) in each side to finally produce the image of (28, 28)
-					padded_digit = np.pad(resized_digit, ((5,5),(paddingX,paddingX)), "constant", constant_values=0)
-					# print("padded_digit.shape ",padded_digit.shape)
-					height, width = padded_digit.shape
-					if(height > 28 or width > 28):
-						padded_digit = cv2.resize(digit, (28,28))
+					print("xL,yL,wL,hL")
+					print(xL,yL,wL,hL)
 
+					if(wL < 20 or hL < 20):
+						print("espacio letter")
+						textAnswer1 = textAnswer1 + " "
+					else:
+						# Cropping out the digit from the image corresponding to the current contours in the for loop
+						digit = threshLetter[yL:yL+hL, xL:xL+wL]
 
-					# En caso de usar el model de DENSE
-					prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
+						height, width = digit.shape
+						percent = (18* 100) /height 
 
-					
-					# # En caso de usar el model de CNN
-					# prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1))
+						# height = int(height * percent / 100)
+						height = 18
+						width = int(width * percent / 100)
+						if(width % 2 != 0):
+							width = width + 1
 
+						resized_digit = cv2.resize(digit, (width,height))
 
-					textAnswer1 = textAnswer1 + str(letters[int(np.argmax(prediction))])
-
-
-					# print(str(letters[int(np.argmax(prediction))]), np.argmax(prediction))
+						paddingX = abs(int((28 - width) / 2))
+						# # Resizing that digit to (18, 18)
+						# resized_digit = cv2.resize(digit, (18,18))
 						
-					# cv2.imshow("padded_digit letter", padded_digit)
-					# cv2.waitKey(0)
+						# # Padding the digit with 5 pixels of black color (zeros) in each side to finally produce the image of (28, 28)
+						padded_digit = np.pad(resized_digit, ((5,5),(paddingX,paddingX)), "constant", constant_values=0)
+						# print("padded_digit.shape ",padded_digit.shape)
+						height, width = padded_digit.shape
+						if(height > 28 or width > 28):
+							padded_digit = cv2.resize(digit, (28,28))
+
+
+						# En caso de usar el model de DENSE
+						prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
+
+						
+						# # En caso de usar el model de CNN
+						# prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1))
+
+
+						textAnswer1 = textAnswer1 + str(letters[int(np.argmax(prediction))])
+
+
+						# print(str(letters[int(np.argmax(prediction))]), np.argmax(prediction))
+							
+						# cv2.imshow("padded_digit letter", padded_digit)
+						# cv2.waitKey(0)
 
 						# Adding the preproces
 				####################INVENTO DE CORTAR LA LETRA######################
