@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'formucab',
         'USER':'postgres',
-        'PASSWORD':'root',
+        'PASSWORD':'postgres',
         'HOST':'localhost'
     }
 }

@@ -18,8 +18,10 @@ import random
 
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.preprocessing.image import img_to_array
+# from tensorflow.keras.preprocessing import image
+# from tensorflow.keras.preprocessing.image import img_to_array
+import keras
+from keras.models import load_model 
 
 
 @api_view(['GET',])
@@ -213,6 +215,7 @@ def development(cnts,thresh,paper):
 	
 	#DENSE Model
 	new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/emnist_trained_dense.h5')
+	# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/new.h5')
 
 
 	# # #CNN Model
@@ -243,7 +246,7 @@ def development(cnts,thresh,paper):
 
 	#####################################################CODIGO MEDIUM PARA DETECTAR CUADRADOS#########################################################
 
-	ctnsBox = getCntsBoxs(box)
+	ctnsBox = getCntsBoxs(box,boxPaper)
 	
 	idx = 0
 
@@ -281,7 +284,7 @@ def development(cnts,thresh,paper):
 				ctnsLetter, _ = cv2.findContours(blurredLetter.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 				# print("STR(LEN(ctnsLetter))" , len(ctnsLetter))
 				
-				# cv2.imshow("new_img", blurredLetter)
+				# cv2.imshow("new_img", new_img)
 				# cv2.waitKey(0)
 
 				# for ctLetter in ctnsLetter:
@@ -318,13 +321,14 @@ def development(cnts,thresh,paper):
 						if(hi2 > biggerCtn[0]):
 							biggerCtn = ( hi2 , wi2, ctij)
 
-
-					if(wL < 20 or hL < 20):
+					xi, yi, wi, hi = cv2.boundingRect(biggerCtn[2])
+					
+					if(wi < 20 or hi < 20):
 						print("espacio ij")
 						textAnswer1 = textAnswer1 + " "
 					else:
 
-						xi, yi, wi, hi = cv2.boundingRect(biggerCtn[2])
+						
 						digit = threshLetter[yi:yi+hi, xi:xi+wi]
 
 						height, width = digit.shape
@@ -450,7 +454,35 @@ def development(cnts,thresh,paper):
 	return textAnswer1.lower()
 
 
-def getCntsBoxs(box):
+def getCntsBoxs(box,boxPaper):
+
+	# height, width = box.shape
+	# percent = (300* 100) /height 
+
+	# # height = int(height * percent / 100)
+	# height = int(height * percent / 100)
+	# width = int(width * percent / 100)
+
+	# resized = cv2.resize(box.copy(), (width,height))
+
+	# cv2.imshow("boxnormal", resized)
+	# cv2.waitKey(0)
+
+	box = cv2.GaussianBlur(box, (21,21), 0)
+
+	
+	# height, width = box.shape
+	# percent = (300* 100) /height 
+
+	# # height = int(height * percent / 100)
+	# height = int(height * percent / 100)
+	# width = int(width * percent / 100)
+
+	# resized = cv2.resize(box.copy(), (width,height))
+
+	# cv2.imshow("boxblurred", resized)
+	# cv2.waitKey(0)
+
 	# Defining a kernel length
 	kernel_length = np.array(box).shape[1]//80
 	
@@ -484,16 +516,33 @@ def getCntsBoxs(box):
 	
 	# FILTER CONTOURS WITH WIDT > 50 AND HEIGTH > 50
 	ctnsBoxTemp = []
+	
+	print("before len(ctnsBox): " , len(ctnsBox))
+
 	for ct in ctnsBox:
 		pass
 		xBoxito, yBoxito, wBoxito, hBoxito = cv2.boundingRect(ct)
 		
 		if(wBoxito > 50 and hBoxito > 50):
 			ctnsBoxTemp.append(ct)
-
-		# cv2.drawContours(box, [ct], -1, (random.randint(1,254),random.randint(1,254),random.randint(1,254)), -1)
+			# cv2.drawContours(boxPaper, [ct], -1, (random.randint(1,254),random.randint(1,254),random.randint(1,254)), -1)
+	
 	ctnsBox = ctnsBoxTemp
+	print("after  len(ctnsBox): " ,len(ctnsBox))
 
+
+
+	# height, width = box.shape
+	# percent = (300* 100) /height 
+
+	# # height = int(height * percent / 100)
+	# height = int(height * percent / 100)
+	# width = int(width * percent / 100)
+
+	# resized = cv2.resize(boxPaper.copy(), (width,height))
+
+	# cv2.imshow("boxpinted", resized)
+	# cv2.waitKey(0)
 	# Sort all the contours by top to bottom.
 	(ctnsBox, boundingBoxes) = contours.sort_contours(ctnsBox, method="top-to-bottom")
 
