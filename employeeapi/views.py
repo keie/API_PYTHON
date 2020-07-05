@@ -63,12 +63,12 @@ def api_create_processing_view(request):
                     containerAux.append(json_body['questions'][y + indexQuestion]['answers'][value]['name'])
         indexQuestion = len(containerAux)
                 
-    r = requests.post('http://127.0.0.1:8000/api/insert/responseForm', json={
-                    "response":containerAux,
-                    "createdAt":"2020-02-08T16:31:23.043000Z",
-                    "updatedAt":"2020-02-08T16:31:23.043000Z",
-                    "formId":idForm
-                })
+    # r = requests.post('http://127.0.0.1:8000/api/insert/responseForm', json={
+    #                 "response":containerAux,
+    #                 "createdAt":"2020-02-08T16:31:23.043000Z",
+    #                 "updatedAt":"2020-02-08T16:31:23.043000Z",
+    #                 "formId":idForm
+    #             })
     return Response(containerAux)
 
 @api_view(['GET',])

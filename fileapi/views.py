@@ -20,8 +20,8 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 # from tensorflow.keras.preprocessing import image
 # from tensorflow.keras.preprocessing.image import img_to_array
-import keras
-from keras.models import load_model 
+# import keras
+# from keras.models import load_model 
 
 
 @api_view(['GET',])
@@ -360,6 +360,9 @@ def development(cnts,thresh,paper):
 							padded_digit = cv2.resize(digit, (28,28))
 					
 
+						# cv2.imshow("padded_digit", padded_digit)
+						# cv2.waitKey(0)
+
 						# En caso de usar el model de DENSE
 						prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
 						
@@ -421,6 +424,8 @@ def development(cnts,thresh,paper):
 						prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
 
 						
+						# cv2.imshow("padded_digit", padded_digit)
+						# cv2.waitKey(0)
 						# # En caso de usar el model de CNN
 						# prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1))
 
