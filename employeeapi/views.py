@@ -41,9 +41,11 @@ def api_create_file_view(request):
 def api_create_processing_view(request):
     idForm=request.data['formId']
     images=request.data['files']
+    form=request.data['form']
     containerAux=[]
-    JsonQuestion=requests.get('http://127.0.0.1:8000/api/form/'+str(idForm))
-    json_body = JsonQuestion.json()
+    # JsonQuestion=requests.get('http://127.0.0.1:8000/api/form/'+str(idForm))
+    # json_body = JsonQuestion.json()
+    json_body = form
     indexQuestion = 0
     for i,cell in enumerate(images):
         for y,value in enumerate(scanner(indexQuestion, cell,json_body)):

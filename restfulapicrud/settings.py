@@ -25,6 +25,7 @@ SECRET_KEY = '7m)i=9whs0rbuba7jg=dz+&rhau%(78x40%!-h_*s&86yt33i('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# ALLOWED_HOSTS = ["oswaldoapipython.aquilesypedrotesis.host", "ec2-3-231-46-238.compute-1.amazonaws.com"]
 ALLOWED_HOSTS = []
 
 
@@ -77,6 +78,16 @@ WSGI_APPLICATION = 'restfulapicrud.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'dc6m5he62me2um',
+#         'USER':'kjrcohaxzjpgrz',
+#         'PASSWORD':'e9d36f5b458d7153faf06032dacb02171efed83b57ef601928abda8075a02128',
+#         'HOST':'ec2-3-231-46-238.compute-1.amazonaws.com'
+#     }
+# }
 
 DATABASES = {
     'default': {

@@ -13,6 +13,7 @@ import imutils
 import cv2
 import base64
 import random
+import os
 
 #Import for neural network
 
@@ -214,7 +215,9 @@ def development(cnts,thresh,paper):
 
 	
 	#DENSE Model
-	new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/emnist_trained_dense.h5')
+	print("ESTE ES LA RUTA")
+	print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+	new_model = tf.keras.models.load_model(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/fileapi/emnist_trained_dense.h5')
 	# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/new.h5')
 
 
