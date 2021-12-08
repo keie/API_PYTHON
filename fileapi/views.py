@@ -108,17 +108,23 @@ def scanner(indexQuestion,file2,json_questions):
 	cnts = imutils.grab_contours(cnts)
 	questionCnts = []
 
+
+		
+	imS = cv2.resize(blurredThresh, (750,1000))   
+	# cv2.imshow("paper", imS)
+	# cv2.waitKey(0)
+
 	for c in cnts:
 		
 		(x, y, w, h) = cv2.boundingRect(c)
 		ar = w / float(h)
 		# print(h,w,ar)
 		# box
-		if w >= 3500 and h >= 850 and ar > 4:
+		if w >= 1000 and h >= 400 and ar > 0.5:
 			questionCnts.append(c)
 			
 		# bubble
-		if w >= 250 and h >= 250 and ar >= 0.8 and ar <= 1.5:
+		if w >= 124 and h >= 131 and ar >= 0.8 and ar <= 1.5:
 			questionCnts.append(c)
 
 	questionCnts = contours.sort_contours(questionCnts,
@@ -217,7 +223,12 @@ def development(cnts,thresh,paper):
 	#DENSE Model
 	print("ESTE ES LA RUTA")
 	print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-	new_model = tf.keras.models.load_model(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/fileapi/emnist_trained_dense.h5')
+	# new_model = tf.keras.models.load_model(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/fileapi/emnist_trained_dense.h5')
+
+	# NUEVO MODELO
+	new_model = tf.keras.models.load_model(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/fileapi/letras_y_nn_final.h5')
+
+	
 	# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/new.h5')
 
 
@@ -228,11 +239,18 @@ def development(cnts,thresh,paper):
 	# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/emnist_trained_yuca.h5')
 
 
-	letters ={0:0,1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,
-	10:'A',11:'B',12:'C',13:'D',14:'E',15:'F',16:'G',17:'H',18:'I',19:'J',
-	20:'K',21:'l',22:'M',23:'N',24:'O',25:'P',26:'Q',27:'R',28:'S',29:'T',
-	30:'u',31:'V',32:'W',33:'X',34:'Y',35:'Z',36:'a',37:'b',38:'d',39:'e',
-	40:'f',41:'g',42:'h',43:'n',44:'q',45:'r',46:'t',47:'அ',48:'ஆ'}
+	# letters ={0:0,1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,
+	# 10:'A',11:'B',12:'C',13:'D',14:'E',15:'F',16:'G',17:'H',18:'I',19:'J',
+	# 20:'K',21:'l',22:'M',23:'N',24:'O',25:'P',26:'Q',27:'R',28:'S',29:'T',
+	# 30:'u',31:'V',32:'W',33:'X',34:'Y',35:'Z',36:'a',37:'b',38:'d',39:'e',
+	# 40:'f',41:'g',42:'h',43:'n',44:'q',45:'r',46:'t',47:'அ',48:'ஆ'}
+
+
+	letters = {
+		0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G',7:'H',8:'I',9:'J',
+		10:'K',11:'L',12:'M',13:'N',14:'O',15:'P',16:'Q',17:'R',
+		18:'S',19:'T',20:'U',21:'V',22:'W',23:'X', 24:'Y',25:'Z', 26: 'Ñ'
+	}
 
 
 	x,y,w,h = cv2.boundingRect(cnts[0])
@@ -366,8 +384,11 @@ def development(cnts,thresh,paper):
 						# cv2.imshow("padded_digit", padded_digit)
 						# cv2.waitKey(0)
 
+						# NUEVO MODELO
+						prediction = new_model.predict(digit.reshape(1, 28, 28, 1)) 
+
 						# En caso de usar el model de DENSE
-						prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
+						# prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
 						
 						# # En caso de usar el model de CNN
 						# prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1))
@@ -423,8 +444,11 @@ def development(cnts,thresh,paper):
 							padded_digit = cv2.resize(digit, (28,28))
 
 
+						# NUEVO MODELO
+						prediction = new_model.predict(digit.reshape(1, 28, 28, 1)) 
+
 						# En caso de usar el model de DENSE
-						prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
+						# prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
 
 						
 						# cv2.imshow("padded_digit", padded_digit)
