@@ -47,7 +47,7 @@ jobs:
 
     steps:
       - name: install necesary apps
-        script: |
+        run: |
           sudo apt-get update
           sudo apt-get install libglib2.0-0
 
