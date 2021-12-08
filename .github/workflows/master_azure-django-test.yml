@@ -46,6 +46,11 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      - name: install necesary apps
+        - script: |
+          sudo apt-get update
+          sudo apt-get install libglib2.0-0
+
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
