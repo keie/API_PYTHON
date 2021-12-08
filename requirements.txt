@@ -1,6 +1,5 @@
 absl-py==0.9.0
 asgiref==3.2.7
-astroid==2.3.3
 astunparse==1.6.3
 autocorrect==1.1.0
 cachetools==4.1.0
