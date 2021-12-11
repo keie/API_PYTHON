@@ -48,8 +48,8 @@ jobs:
     steps:
       - name: install necesary apps
         run: |
-          sudo apt-get update
-          sudo apt-get install libglib2.0-0
+          sudo apt-get update -y
+          sudo apt-get install -y libglib2.0-0 libsm6 libxrender1 libxext6
 
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
