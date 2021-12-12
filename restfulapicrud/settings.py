@@ -26,7 +26,7 @@ SECRET_KEY = '7m)i=9whs0rbuba7jg=dz+&rhau%(78x40%!-h_*s&86yt33i('
 DEBUG = True
 
 # ALLOWED_HOSTS = ["oswaldoapipython.aquilesypedrotesis.host", "ec2-3-231-46-238.compute-1.amazonaws.com"]
-ALLOWED_HOSTS = ['EC2_DNS_NAME']
+ALLOWED_HOSTS = ['ec2-18-231-191-128.sa-east-1.compute.amazonaws.com', '18.231.191.128']
 
 
 # Application definition
