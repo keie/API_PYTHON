@@ -89,15 +89,15 @@ WSGI_APPLICATION = 'restfulapicrud.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'formucab',
-        'USER':'postgres',
-        'PASSWORD':'postgres',
-        'HOST':'localhost'
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'formucab',
+#         'USER':'postgres',
+#         'PASSWORD':'postgres',
+#         'HOST':'localhost'
+#     }
+# }
 
 
 # Password validation
