@@ -50,6 +50,24 @@ import tensorflow as tf
 # 			return Response(serializer.data,status=status.HTTP_201_CREATED)
 # 		return Response(serializer.data,status=status.HTTP_400_BAD_REQUEST)
 
+#DENSE Model
+print("ESTE ES LA RUTA")
+print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# new_model = tf.keras.models.load_model(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/fileapi/emnist_trained_dense.h5')
+
+# NUEVO MODELO
+new_model = tf.keras.models.load_model(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/fileapi/letras_y_nn_final.h5')
+
+
+# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/new.h5')
+
+
+# # #CNN Model
+# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/emnist_trained.h5')
+
+# #CNN YUCA Model
+# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/emnist_trained_yuca.h5')
+
 def test():
 
 	return Response("it works!")
@@ -220,23 +238,7 @@ def development(cnts,thresh,paper):
 	textLine = ""
 
 	
-	#DENSE Model
-	print("ESTE ES LA RUTA")
-	print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-	# new_model = tf.keras.models.load_model(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/fileapi/emnist_trained_dense.h5')
-
-	# NUEVO MODELO
-	new_model = tf.keras.models.load_model(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/fileapi/letras_y_nn_final.h5')
-
 	
-	# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/new.h5')
-
-
-	# # #CNN Model
-	# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/emnist_trained.h5')
-	
-	# #CNN YUCA Model
-	# new_model = tf.keras.models.load_model('C:/Users/oswal/Documents/UCAB/Tesis/Proyecto/Scanner/API_PYTHON/fileapi/emnist_trained_yuca.h5')
 
 
 	# letters ={0:0,1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,
@@ -385,7 +387,7 @@ def development(cnts,thresh,paper):
 						# cv2.waitKey(0)
 
 						# NUEVO MODELO
-						prediction = new_model.predict(digit.reshape(1, 28, 28, 1)) 
+						prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1)) 
 
 						# En caso de usar el model de DENSE
 						# prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
@@ -445,7 +447,7 @@ def development(cnts,thresh,paper):
 
 
 						# NUEVO MODELO
-						prediction = new_model.predict(digit.reshape(1, 28, 28, 1)) 
+						prediction = new_model.predict(padded_digit.reshape(1, 28, 28, 1)) 
 
 						# En caso de usar el model de DENSE
 						# prediction = new_model.predict(padded_digit.flatten().reshape(-1, 28*28))  
