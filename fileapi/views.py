@@ -138,11 +138,11 @@ def scanner(indexQuestion,file2,json_questions):
 		ar = w / float(h)
 		# print(h,w,ar)
 		# box
-		if w >= 1000 and h >= 400 and ar > 0.5:
+		if w >= 1000 and h >= 250 and ar > 0.5:
 			questionCnts.append(c)
 			
 		# bubble
-		if w >= 124 and h >= 131 and ar >= 0.8 and ar <= 1.5:
+		if w >= 80 and h >= 80 and ar >= 0.8 and ar <= 1.5:
 			questionCnts.append(c)
 
 	questionCnts = contours.sort_contours(questionCnts,
