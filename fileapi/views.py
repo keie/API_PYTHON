@@ -17,6 +17,17 @@ def test():
 
 	return Response("it works!")
 
+MIN_WIDTH_BUBBLE=70
+MAX_WIDTH_BUBBLE=90
+MIN_HEIGHT_BUBBLE=70
+MAX_HEIGHT_BUBBLE=90
+MIN_AR_BUBBLE=0.8
+MAX_AR_BUBBLE=1.5
+MIN_WIDTH_BOX=1000
+MAX_WIDTH_BOX=1500
+MIN_HEIGHT_BOX=250
+MAX_HEIGHT_BOX=850
+MIN_AR_BOX=0.5
 
 def scanner(indexQuestion,file2,json_questions):
 
@@ -72,23 +83,21 @@ def scanner(indexQuestion,file2,json_questions):
 	questionCnts = []
 
 
-		
-	imS = cv2.resize(blurredThresh, (750,1000))   
-	# cv2.imshow("paper", imS)
-	# cv2.waitKey(0)
-
 	for c in cnts:
 		
 		(x, y, w, h) = cv2.boundingRect(c)
 		ar = w / float(h)
-		# print(h,w,ar)
+		# print(w,h,ar)
 		# box
-		if w >= 1000 and h >= 250 and ar > 0.5:
+		if w >= MIN_WIDTH_BOX and w <= MAX_WIDTH_BOX and h >= MIN_HEIGHT_BOX and h <= MAX_HEIGHT_BOX and ar > MIN_AR_BOX:
 			questionCnts.append(c)
 			
 		# bubble
-		if w >= 80 and h >= 80 and ar >= 0.8 and ar <= 1.5:
+		if w >= MIN_WIDTH_BUBBLE and w <= MAX_WIDTH_BUBBLE and h >= MIN_HEIGHT_BUBBLE and h <= MAX_HEIGHT_BUBBLE and ar >= MIN_AR_BUBBLE and ar <= MAX_AR_BUBBLE:
 			questionCnts.append(c)
+
+	if (len(questionCnts) == 0):
+		return None
 
 	questionCnts = contours.sort_contours(questionCnts,
 		method="top-to-bottom")[0]
@@ -100,7 +109,7 @@ def scanner(indexQuestion,file2,json_questions):
 		pass
 		cv2.drawContours(p, [ct], -1, (random.randint(1,254),random.randint(1,254),random.randint(1,254)), -1)
 
-		
+
 	# imS = cv2.resize(p, (750,1000))   
 	# cv2.imshow("paper", imS)
 	# cv2.waitKey(0)
