@@ -18,15 +18,15 @@ def test():
 	return Response("it works!")
 
 MIN_WIDTH_BUBBLE=70
-MAX_WIDTH_BUBBLE=90
+MAX_WIDTH_BUBBLE=110
 MIN_HEIGHT_BUBBLE=70
-MAX_HEIGHT_BUBBLE=90
+MAX_HEIGHT_BUBBLE=110
 MIN_AR_BUBBLE=0.8
 MAX_AR_BUBBLE=1.5
 MIN_WIDTH_BOX=1000
-MAX_WIDTH_BOX=1500
+MAX_WIDTH_BOX=1700
 MIN_HEIGHT_BOX=250
-MAX_HEIGHT_BOX=850
+MAX_HEIGHT_BOX=950
 MIN_AR_BOX=0.5
 
 def scanner(indexQuestion,file2,json_questions):
@@ -42,6 +42,10 @@ def scanner(indexQuestion,file2,json_questions):
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	blurred = cv2.GaussianBlur(gray, (5, 5), 0)
 	edged = cv2.Canny(blurred, 75, 200)
+	
+	# imS = cv2.resize(image, (750,1000))   
+	# cv2.imshow("paper", imS)
+	# cv2.waitKey(0)
 	
 	cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL,
 		cv2.CHAIN_APPROX_SIMPLE)
@@ -62,20 +66,30 @@ def scanner(indexQuestion,file2,json_questions):
 				docCnt = approx
 				paperimage = c
 				break
-
-	paper = four_point_transform(image, docCnt.reshape(4, 2))
-	warped = four_point_transform(gray, docCnt.reshape(4, 2))
+	# paper = four_point_transform(image, docCnt.reshape(4, 2))
+	# warped = four_point_transform(gray, docCnt.reshape(4, 2))
 
 	paper = image
 	warped = gray
+	
+	thresh = cv2.threshold(warped, 0, 255,
+		cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
 
 	
 	blurredWarped = cv2.GaussianBlur(warped, (21,21), 0)
+
+	# imS = cv2.resize(blurredWarped, (750,1000))   
+	# cv2.imshow("blurredWarped", imS)
+	# cv2.waitKey(0)
 	
 	blurredThresh = cv2.threshold(blurredWarped, 0, 255,
 	cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
-	thresh = cv2.threshold(warped, 0, 255,
-		cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+
+	
+		
+	# imS = cv2.resize(blurredThresh, (750,1000))   
+	# cv2.imshow("blurredThresh", imS)
+	# cv2.waitKey(0)
 
 	cnts = cv2.findContours(blurredThresh.copy(), cv2.RETR_EXTERNAL,
 		cv2.CHAIN_APPROX_SIMPLE)
@@ -97,13 +111,14 @@ def scanner(indexQuestion,file2,json_questions):
 			questionCnts.append(c)
 
 	if (len(questionCnts) == 0):
+		print('NO HAY CONTORNOS O HAY UN ERROR EN LA IMAGE')
 		return None
 
 	questionCnts = contours.sort_contours(questionCnts,
 		method="top-to-bottom")[0]
 	correct = 0
 
-	
+
 	p = paper.copy()
 	for ct in questionCnts:
 		pass
@@ -146,8 +161,7 @@ def scanner(indexQuestion,file2,json_questions):
 		bubbled = None
 		start = stop 
 		answer = None
-		# print("entro (i+indexQuestion)" + str(i+indexQuestion) + " " + str(json_questions['questions'][i+indexQuestion]['type']))
-		if(str(json_questions['questions'][i+indexQuestion]['type']) == "ssimple" or str(json_questions['questions'][i+indexQuestion]['type'] == "scala") ):
+		if(str(json_questions['questions'][i+indexQuestion]['type']) == "ssimple" or str(json_questions['questions'][i+indexQuestion]['type']) == "scala" ):
 			answer = simple(cnts, thresh)
 		if(str(json_questions['questions'][i+indexQuestion]['type']) == "smultiple"):
 			answer = multiple(cnts, thresh)
@@ -155,6 +169,10 @@ def scanner(indexQuestion,file2,json_questions):
 			answer = ""
 		answersArray.append(answer)
 		i = i + 1
+	
+	# imS = cv2.resize(p3, (750,1000))   
+	# cv2.imshow("paper", imS)
+	# cv2.waitKey(0)
 
 	# grab the test taker
 	
@@ -169,12 +187,14 @@ def simple(cnts, thresh):
 		mask = cv2.bitwise_and(thresh, thresh, mask=mask)
 		total = cv2.countNonZero(mask)
 		if bubbled is None or total > bubbled[0]:
-			bubbled = (total, j)
+			bubbled = (total, j, c)
+	# cv2.drawContours(p3, [bubbled[2]], -1, (255 ,0 ,0 ), -1)
 	return bubbled[1]
 
 
 def multiple(cnts, thresh):
 	answers = []
+	# CTNLIST = []
 	validCheck = 4000
 	for (j, c) in enumerate(cnts):
 		mask = np.zeros(thresh.shape, dtype="uint8")
@@ -183,4 +203,8 @@ def multiple(cnts, thresh):
 		total = cv2.countNonZero(mask)
 		if total > validCheck:
 			answers.append(j)
+			# CTNLIST.append(c)
+	# for ct in CTNLIST:
+	# 	pass
+	# 	cv2.drawContours(p3, [ct], -1, (0,255,0), -1)
 	return answers
